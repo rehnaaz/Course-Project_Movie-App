@@ -10,7 +10,7 @@ const User = db.users;
 exports.signUp= async (req, res) => {
 
   if (!req.body.email && !req.body.password) {
-    res.status(400).send({ message: "Please provide email and password to continue." });
+    res.status(400).send({ message: "Please enter email and password to continue." });
     return;
   }
   
@@ -37,7 +37,7 @@ exports.signUp= async (req, res) => {
         res.send(userSaved);
       } 
       catch(err) {
-        res.status(500).send({message: err.message || "Some error occurred, please try again later."});
+        res.status(500).send({message: err.message || "Something is wrong, please try again later."});
       }
     }
     else {
@@ -46,7 +46,7 @@ exports.signUp= async (req, res) => {
     }
   } 
   catch(err) {
-    res.status(500).send({message: err.message || "Some error occurred, please try again later."});
+    res.status(500).send({message: err.message || "Something is wrong, please try again later."});
   }
 };
 
@@ -65,7 +65,7 @@ exports.login =async (req, res) => {
     const user = await User.findOne({ username: username });
 
     if (!user)
-      return res.status(400).json({ msg: "No account with this email has been registered." });
+      return res.status(400).json({ msg: "No account with this email." });
   
       if (user.password === password) {
         user.isLoggedIn = true;
@@ -73,7 +73,7 @@ exports.login =async (req, res) => {
         user.accesstoken = tokenGenerator.generate();
         User.findOneAndUpdate({ username: username }, user,  { useFindAndModify: false })
           .then(data => {
-            if (data === null) throw new Error("Failed to update");
+            if (data === null) throw new Error("Unable to update");
             res.status(200).send({
               "id" : user._id,
               "uuid": user.uuid,
@@ -81,13 +81,13 @@ exports.login =async (req, res) => {
             });
           })
           .catch(err => {
-            res.status(500).send(err.message || "Internal server error");
+            res.status(500).send(err.message || "Internal Server Error");
           });
       } else {
         res.status(401).send("Invalid credentials");
       }
     } catch (err) {
-      res.status(500).send(err.message || "user not found");
+      res.status(500).send(err.message || "User not found");
     }
 };
 
@@ -95,7 +95,7 @@ exports.login =async (req, res) => {
 exports.logout = async (req, res) => {
   
   if (!req.body.uuid) {
-    res.status(400).send({ message: "Please provide user Id." });
+    res.status(400).send({ message: "Please enter user Id." });
     return;
   }
   
@@ -126,7 +126,7 @@ exports.getCouponCode = async (req, res) => {
       res.send([]);
     }
   } catch (err) {
-    return res.status(500).send(err.message || "user not found");
+    return res.status(500).send(err.message || "User not found");
   }
  
 };
